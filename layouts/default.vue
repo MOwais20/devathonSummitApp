@@ -22,5 +22,16 @@ export default {
       fixed: false,
     }
   },
+  mounted() {
+    const userData = localStorage.getItem('userData')
+    if (userData) {
+      this.$store.commit('setUser', JSON.parse(userData))
+    }
+
+    // Check Token
+    const token = localStorage.getItem('investor_hub_token')
+    if (token) this.$store.commit('authenticate', true)
+    else this.$store.commit('authenticate', false)
+  },
 }
 </script>

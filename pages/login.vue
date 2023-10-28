@@ -112,9 +112,37 @@ export default {
             this.userData.email,
             this.userData.password
           )
-          .then((userCredential) => {
+          .then(async (userCredential) => {
             if (userCredential?.user?.uid) {
-              this.$router.push('/')
+              const user = this.$fire.auth.currentUser
+              if (user) {
+                const token = await user.getIdToken()
+                //  set token
+                localStorage.setItem('investor_hub_token', token)
+
+                const userRef = this.$fire.firestore
+                  .collection('users')
+                  .doc(user?.uid)
+                console.log(
+                  '🚀 ~ file: default.vue:31 ~ created ~ userRef:',
+                  userRef
+                )
+                const userSnapshot = await userRef.get()
+                if (userSnapshot.exists) {
+                  const userData = await userSnapshot.data()
+                  console.log('User Data:', userData)
+                  // Store data in state
+                  if (userData) {
+                    this.$store.commit('setUser', userData)
+                    // save in local storage
+                    localStorage.setItem('userData', JSON.stringify(userData))
+                  }
+                } else {
+                  console.error('User data not found.')
+                }
+
+                this.$router.push('/')
+              }
             }
           })
           .catch((error) => {
@@ -128,19 +156,6 @@ export default {
             this.loading = false
           })
       }
-    },
-
-    logout() {
-      auth
-        .signOut()
-        .then(() => {
-          // Successfully logged out
-          console.log('Logged out')
-        })
-        .catch((error) => {
-          // Handle logout error
-          console.error(error)
-        })
     },
   },
 }

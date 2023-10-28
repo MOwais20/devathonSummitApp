@@ -1,7 +1,7 @@
 <template>
   <section class="tw-h-full">
     <v-row class="tw-h-full">
-      <v-col>
+      <v-col cols="5">
         <v-card height="100%" color="primary" outlined flat>
           <v-card-text
             class="d-flex flex-column justify-space-between align-center tw-h-full"
@@ -23,48 +23,80 @@
         </v-card>
       </v-col>
       <v-col class="d-flex flex-column align-center justify-center">
-        <v-form ref="registerForm">
-          <v-text-field
-            v-model="userData.email"
-            :rules="emailRules"
-            solo
-            outlined
-            label="Email"
-            dense
-          >
-          </v-text-field>
+        <v-card
+          flat
+          class="pa-5"
+          :width="$vuetify.breakpoint.mobile ? 'auto' : 400"
+        >
+          <v-form ref="registerForm">
+            <h2>Register as</h2>
+            <div class="d-flex justify-start align-center my-3 mb-7">
+              <v-btn
+                @click="userData.accountType = 'investor'"
+                outlined
+                class="mx-2"
+                :class="
+                  userData.accountType === 'investor'
+                    ? 'primary white--text'
+                    : 'blue lighten-4'
+                "
+              >
+                Investor
+              </v-btn>
+              <v-btn
+                @click="userData.accountType = 'productOwner'"
+                outlined
+                class="mx-2"
+                :class="
+                  userData.accountType === 'productOwner'
+                    ? 'primary white--text'
+                    : 'blue lighten-4'
+                "
+              >
+                Product Owner
+              </v-btn>
+            </div>
 
-          <v-text-field
-            counter
-            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="showPassword ? 'text' : 'password'"
-            name="input-10-2"
-            v-model="userData.password"
-            dense
-            outlined
-            @keyup.enter="submit"
-            :rules="[(v) => !!v || 'Password is required']"
-            hint="At least 12 characters"
-            @click:append="showPassword = !showPassword"
-          >
-          </v-text-field>
+            <v-text-field
+              v-model="userData.email"
+              :rules="emailRules"
+              solo
+              outlined
+              label="Email"
+            >
+            </v-text-field>
 
-          <div class="my-5">
-            Already have an account?
-            <nuxt-link to="/login">Sign In</nuxt-link>
-          </div>
+            <v-text-field
+              counter
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPassword ? 'text' : 'password'"
+              name="input-10-2"
+              v-model="userData.password"
+              outlined
+              @keyup.enter="submit"
+              :rules="[(v) => !!v || 'Password is required']"
+              hint="At least 12 characters"
+              @click:append="showPassword = !showPassword"
+            >
+            </v-text-field>
 
-          <v-btn
-            @click="register"
-            depressed
-            height="45"
-            color="primary"
-            max-width="300"
-            rounded
-          >
-            Register
-          </v-btn>
-        </v-form>
+            <div class="my-5">
+              Already have an account?
+              <nuxt-link to="/login">Sign In</nuxt-link>
+            </div>
+
+            <v-btn
+              @click="register"
+              depressed
+              height="45"
+              color="primary"
+              max-width="300"
+              rounded
+            >
+              Register
+            </v-btn>
+          </v-form>
+        </v-card>
       </v-col>
     </v-row>
   </section>
@@ -79,6 +111,7 @@ export default {
       userData: {
         email: null,
         password: null,
+        accountType: null,
       },
       emailRules: [
         (v) => !!v || 'E-mail is required',
@@ -86,9 +119,31 @@ export default {
       ],
     }
   },
+  created() {
+    console.log(this.$fire.firestore)
+  },
   methods: {
     async register() {
       try {
+        if (!this.userData.accountType) {
+          // Show alert
+          this.$swal.fire({
+            toast: true,
+            timerProgressBar: true,
+            position: 'top-end',
+            icon: 'error',
+            text: 'Select account type',
+            width: 500,
+            showConfirmButton: false,
+            timer: 2000,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', this.$swal.stopTimer)
+              toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+            },
+          })
+          return
+        }
+
         if (this.$refs.registerForm.validate()) {
           await this.$fire.auth
             .createUserWithEmailAndPassword(
@@ -96,15 +151,24 @@ export default {
               this.userData.password
             )
             .then((response) => {
-              console.log(
-                '🚀 ~ file: register.vue:99 ~ .then ~ response:',
-                response,
-                response.data
-              )
-
               if (response?.user?.uid) {
                 // set isAuth to true
                 this.$store.commit('authenticate', true)
+
+                // Store user data in Firestore with the user's UID as the document ID
+                const user = response?.user
+                const db = this.$fire.firestore
+                db.collection('users')
+                  .doc(user.uid)
+                  .set({
+                    accountType: this.userData.accountType,
+                  })
+                  .then(() => {
+                    console.log('User data stored in Firestore')
+                  })
+                  .catch((error) => {
+                    console.error('Error storing user data:', error)
+                  })
 
                 // show a toast that account created
                 this.$swal.fire({

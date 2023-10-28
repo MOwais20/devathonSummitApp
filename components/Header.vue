@@ -35,8 +35,13 @@
       <!-- <v-btn icon @click.stop="fixed = !fixed">
         <v-icon>mdi-minus</v-icon>
       </v-btn> -->
-      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <nuxt-link to="/">
+        <v-toolbar-title class="black--text">{{ title }}</v-toolbar-title>
+      </nuxt-link>
+
       <v-spacer />
+
+      <HeaderMenu />
     </v-app-bar>
   </div>
 </template>
@@ -63,7 +68,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'SDS App',
+      title: 'InvestHub',
     }
   },
 }

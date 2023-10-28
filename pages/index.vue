@@ -1,87 +1,78 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
-      </v-card>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>
-            Vuetify is a progressive Material Design component framework for
-            Vue.js. It was designed to empower developers to create amazing
-            applications.
-          </p>
-          <p>
-            For more information on Vuetify, check out the
-            <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation </a
-            >.
-          </p>
-          <p>
-            If you have questions, please join the official
-            <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord </a
-            >.
-          </p>
-          <p>
-            Find a bug? Report it on the github
-            <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board </a
-            >.
-          </p>
-          <p>
-            Thank you for developing with Vuetify and I look forward to bringing
-            more exciting features in the future.
-          </p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3" />
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br />
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" nuxt to="/inspire"> Continue </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-container>
+    <h1 class="tw-text-4xl tw-font-bold">Dashboard</h1>
+
+    <v-row>
+      <v-col
+        cols="12"
+        md="3"
+        lg="3"
+        xl="3"
+        v-for="(card, card_index) in dashboardCards"
+        :key="card_index"
+      >
+        <v-card
+          v-if="!dataLoading"
+          rounded="md"
+          class="my-2 outlined"
+          color="secondary"
+          flat
+          height="100"
+          @click="$router.push(card.route)"
+        >
+          <v-card-text class="black--text">
+            <span class="font-weight-bold">{{ card.text }}</span>
+            <h1 class="py-1 display-2 font-weight-bold">
+              {{ card.value }}
+            </h1>
+          </v-card-text>
+        </v-card>
+
+        <v-skeleton-loader
+          v-else
+          class="ma-2"
+          width="300"
+          height="100"
+          type="card"
+        ></v-skeleton-loader>
+      </v-col>
+    </v-row>
+
+    <div>
+      <ProductOwnerSection v-if="user?.accountType === 'productOwner'" />
+    </div>
+  </v-container>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'IndexPage',
+  middleware: 'auth',
+  data() {
+    return {
+      dataLoading: false,
+      dashboardCards: [
+        {
+          text: 'Ideas',
+          value: 0,
+          route: '#',
+        },
+        {
+          text: 'Investors',
+          value: 0,
+          route: '#',
+        },
+        {
+          text: 'Product Owners',
+          value: 0,
+          route: '#',
+        },
+      ],
+    }
+  },
+  computed: {
+    ...mapGetters(['user']),
+  },
 }
 </script>
