@@ -56,7 +56,13 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     '@nuxtjs/firebase',
+    'vue-sweetalert2/nuxt',
   ],
+
+  sweetalert: {
+    confirmButtonColor: '#3b37ff',
+    cancelButtonColor: '#ff7674',
+  },
 
   firebase: {
     config: {
@@ -92,6 +98,15 @@ export default {
     theme: {
       dark: false,
       themes: {
+        light: {
+          primary: '#3b37ff',
+          accent: colors.grey.lighten3,
+          secondary: colors.amber.lighten3,
+          info: colors.teal.lighten1,
+          warning: colors.amber.base,
+          error: colors.deepOrange.accent4,
+          success: colors.green.accent3,
+        },
         dark: {
           primary: colors.blue.darken2,
           accent: colors.grey.darken3,
