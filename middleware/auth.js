@@ -7,6 +7,6 @@ export default function ({ app, route, redirect, store }) {
   if (!localStorage.getItem('investor_hub_token')) {
     redirect('/login')
   } else if (route?.path != '/') {
-    redirect('/')
+    // redirect('/')
   }
 }

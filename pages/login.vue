@@ -18,7 +18,7 @@
               Where Visions Take Flight
             </h1>
 
-            <v-card color="white" height="100" width="200"> </v-card>
+            <!-- <v-card color="white" height="100" width="200"> </v-card> -->
           </v-card-text>
         </v-card>
       </v-col>

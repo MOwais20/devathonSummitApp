@@ -2,7 +2,7 @@
   <v-container>
     <h1 class="tw-text-4xl tw-font-bold">Dashboard</h1>
 
-    <v-row>
+    <!-- <v-row>
       <v-col
         cols="12"
         md="3"
@@ -36,7 +36,7 @@
           type="card"
         ></v-skeleton-loader>
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <div>
       <ProductOwnerSection v-if="user?.accountType === 'productOwner'" />

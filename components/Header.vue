@@ -36,7 +36,9 @@
         <v-icon>mdi-minus</v-icon>
       </v-btn> -->
       <nuxt-link to="/">
-        <v-toolbar-title class="black--text">{{ title }}</v-toolbar-title>
+        <v-toolbar-title class="white--text pa-1 px-2 rounded-xl primary">{{
+          title
+        }}</v-toolbar-title>
       </nuxt-link>
 
       <v-spacer />
