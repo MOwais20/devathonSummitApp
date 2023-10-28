@@ -66,6 +66,28 @@
             >
             </v-text-field>
 
+            <template v-if="userData.accountType === 'investor'">
+              <v-text-field
+                v-model="userData.investorName"
+                :rules="[() => !!userData.investorName || 'Name is required']"
+                solo
+                outlined
+                label="Your Name"
+              >
+              </v-text-field>
+
+              <v-text-field
+                v-model="userData.investorField"
+                :rules="[
+                  () => !!userData.investorField || 'investorField is required',
+                ]"
+                solo
+                outlined
+                label="Field"
+              >
+              </v-text-field>
+            </template>
+
             <v-text-field
               counter
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -112,6 +134,8 @@ export default {
         email: null,
         password: null,
         accountType: null,
+        investorName: null,
+        investorField: null,
       },
       emailRules: [
         (v) => !!v || 'E-mail is required',
@@ -162,6 +186,8 @@ export default {
                   .doc(user.uid)
                   .set({
                     accountType: this.userData.accountType,
+                    investorField: this.userData.investorField,
+                    investorName: this.userData.investorName,
                   })
                   .then(() => {
                     console.log('User data stored in Firestore')

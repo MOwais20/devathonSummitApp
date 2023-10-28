@@ -39,8 +39,14 @@
     </v-row> -->
 
     <div>
-      <ProductOwnerSection v-if="user?.accountType === 'productOwner'" />
+      <ProductOwnerSection />
+      <InvestorSection />
     </div>
+
+    <!-- <div>
+      <ProductOwnerSection v-if="user?.accountType === 'productOwner'" />
+      <InvestorSection v-else />
+    </div> -->
   </v-container>
 </template>
 

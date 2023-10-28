@@ -55,6 +55,7 @@
             to="/product/ideas-submission"
             nuxt
             rounded
+            height="45"
             depressed
             color="primary"
           >
@@ -65,13 +66,14 @@
     </v-card>
 
     <v-card flat class="pa-5 my-5" outlined>
+      <h2>Submitted Ideas</h2>
       <v-data-table :items="submittedIdeas" :headers="headers"></v-data-table>
     </v-card>
   </section>
 </template>
 
 <script>
-// import { collection, query, where } from 'firebase/firestore'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 export default {
   data() {
     return {
@@ -105,6 +107,8 @@ export default {
           route: '#',
         },
       ],
+      investors: [],
+      productOwners: [],
     }
   },
   computed: {
@@ -114,8 +118,48 @@ export default {
   },
   mounted() {
     this.getSubmittedIdeas()
+    this.getInvestors()
+    this.getProductOwners()
   },
   methods: {
+    getProductOwners() {
+      const q = query(
+        collection(this.$fire.firestore, 'users'),
+        where('accountType', '==', 'productOwner')
+      )
+
+      getDocs(q)
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.productOwners.push(doc.data())
+          })
+
+          // add investors length in dashboard data
+          this.dashboardCards[2].value = this.productOwners.length
+        })
+        .catch((error) => {
+          console.log('Error getting documents: ', error)
+        })
+    },
+    getInvestors() {
+      const q = query(
+        collection(this.$fire.firestore, 'users'),
+        where('accountType', '==', 'investor')
+      )
+
+      getDocs(q)
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.investors.push(doc.data())
+          })
+
+          // add investors length in dashboard data
+          this.dashboardCards[1].value = this.investors.length
+        })
+        .catch((error) => {
+          console.log('Error getting documents: ', error)
+        })
+    },
     moveTo() {
       this.$router.push('/product/ideas-submission')
     },
