@@ -20,9 +20,9 @@
               </v-avatar>
               <template v-if="$vuetify.breakpoint.smAndUp">
                 <span
-                  v-if="userData?.displayName"
+                  v-if="user?.displayName"
                   class="text-capitalize black--text mx-2"
-                  >{{ userData.displayName }}</span
+                  >{{ user.displayName }}</span
                 >
                 <span v-else class="text-capitalize black--text mx-2"
                   >User
@@ -32,26 +32,17 @@
           </v-btn>
         </template>
         <v-list class="py-1 pb-0" dense>
-          <template v-if="userData?.email">
+          <template v-if="user?.email">
             <v-list-item>
               <v-list-item-title class="text-lowercase">
                 <v-chip small>
-                  {{ userData.email }}
+                  {{ user.email }}
                 </v-chip>
               </v-list-item-title>
             </v-list-item>
             <v-divider></v-divider>
           </template>
-          <v-list-item v-if="prefix === 'patient'" to="/settings/profile">
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            v-if="prefix === 'physician'"
-            to="/physician/settings/profile"
-          >
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item>
-          <v-divider></v-divider>
+
           <v-list-item @click="logout">
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>
@@ -71,7 +62,7 @@ export default {
     console.log(this.$fire)
   },
   computed: {
-    ...mapState(['prefix']),
+    ...mapState(['user']),
     userData() {
       return this.$fire?.auth?.currentUser
     },
